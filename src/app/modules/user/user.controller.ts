@@ -1,9 +1,12 @@
+import { verifyToken as verifyJwtToken } from './../../utils/jwt';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status-codes';
 import { catchAsync } from '../../utils/catchAsync';
 import { sendResponse } from '../../utils/sendResponse';
 import { UserServices } from './user.service';
+import { envVars } from '../../config/env';
+import { JwtPayload } from 'jsonwebtoken';
 
 //create user with catchAsync
 const createUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -12,6 +15,22 @@ const createUser = catchAsync(async (req: Request, res: Response, next: NextFunc
         success: true,
         statusCode: httpStatus.CREATED,
         message: 'User created Successfully',
+        data: user
+    });
+});
+
+// update user with catchAsync
+const updateUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.params.id;
+    const token = req.headers.authorization;
+    const verifyToken = verifyJwtToken(token as string, envVars.JWT_ACCESS_SECRET) as JwtPayload;
+    const payload = req.body;
+    const user = await UserServices.updateUser(userId, payload, verifyToken);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.CREATED,
+        message: 'User Updated Successfully',
         data: user
     });
 });
@@ -30,5 +49,6 @@ const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFun
 
 export const UserControllers = {
     createUser,
-    getAllUsers
+    getAllUsers,
+    updateUser
 };
