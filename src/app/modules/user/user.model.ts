@@ -1,7 +1,7 @@
-import { Schema, model } from 'mongoose';
-import { IUser, Role, isActive } from './user.interface';
+import { model, Schema } from 'mongoose';
+import { IAuthProvider, IsActive, IUser, Role } from './user.interface';
 
-const authProviderSchema = new Schema(
+const AuthProviderSchema = new Schema<IAuthProvider>(
     {
         provider: {
             type: String,
@@ -19,48 +19,56 @@ const authProviderSchema = new Schema(
         emailVerified: Boolean,
         phoneNumber: String
     },
-    { _id: false }
+    {
+        versionKey: false,
+        _id: false,
+        timestamps: false
+    }
 );
 
 const userSchema = new Schema<IUser>(
     {
         name: { type: String, required: true },
-        age: { type: Number },
-        email: { type: String, required: true, unique: true },
+        age: Number,
+        email: { type: String, required: true, unique: true, lowercase: true },
         password: { type: String }, // optional for OAuth users
-        phone: { type: String },
+        role: {
+            type: String,
+            enum: Object.values(Role),
+            default: Role.USER
+            // required: true,
+        },
+        phone: { type: String, unique: true, sparse: true },
         picture: { type: String },
         address: { type: String },
 
         isDeleted: { type: Boolean, default: false },
         isActive: {
             type: String,
-            enum: Object.values(isActive),
-            default: isActive.ACTIVE
+            enum: Object.values(IsActive),
+            default: IsActive.ACTIVE
         },
         isVerified: { type: Boolean, default: false },
-
         auths: {
-            type: [authProviderSchema],
+            type: [AuthProviderSchema],
             default: [{ provider: 'credentials', providerId: 'local' }]
         },
-
-        role: {
-            type: String,
-            enum: Object.values(Role),
-            default: Role.USER
-        },
-
         wallet: {
             type: Schema.Types.ObjectId,
             ref: 'Wallet',
             default: null
-        }
+        },
+        commissionRate: {
+            type: Number
+        },
+        createdAt: { type: Date, default: Date.now },
+        updatedAt: { type: Date, default: Date.now }
     },
     {
-        timestamps: true
+        timestamps: true,
+        versionKey: false
     }
 );
 
-const UserModel = model<IUser>('User', userSchema);
-export default UserModel;
+const User = model<IUser>('User', userSchema);
+export default User;

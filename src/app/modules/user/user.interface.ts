@@ -1,23 +1,26 @@
 import { Types } from 'mongoose';
 
 export enum Role {
-    USER = 'USER',
     ADMIN = 'ADMIN',
-    GUIDE = 'GUIDE'
+    USER = 'USER',
+    AGENT = 'AGENT'
 }
 
-export enum isActive {
+export enum IsActive {
     ACTIVE = 'ACTIVE',
     INACTIVE = 'INACTIVE',
     PENDING = 'PENDING',
     APPROVED = 'APPROVED',
+    SUSPENDED = 'SUSPENDED',
     BLOCKED = 'BLOCKED',
     DELETED = 'DELETED',
     VERIFIED = 'VERIFIED'
 }
 
+export type AuthProviderType = 'google' | 'credentials';
+
 export interface IAuthProvider {
-    provider: 'google' | 'credentials';
+    provider: AuthProviderType;
     providerId: string;
     accessToken?: string;
     refreshToken?: string;
@@ -33,18 +36,22 @@ export interface IAuthProvider {
 export interface IUser {
     _id?: Types.ObjectId;
     name: string;
-    age: number;
+    age?: number;
     email: string;
     password?: string;
+    role: Role;
     phone?: string;
     picture?: string;
     address?: string;
+
     isDeleted?: boolean;
-    isActive?: isActive;
+    isActive?: IsActive;
     isVerified?: boolean;
+
     auths: IAuthProvider[];
-    role: Role;
     wallet?: Types.ObjectId;
+    commissionRate?: number; // relevant to agents
+
     createdAt?: Date;
     updatedAt?: Date;
 }
