@@ -19,6 +19,8 @@ export const checkAuth =
             if (!authRoles.includes(verifiedToken.role)) {
                 throw new AppError(403, 'You are not authorized to access this resource');
             }
+            // Attach the verified token to the request object
+            req.user = verifiedToken
 
             next();
         } catch (error) {
