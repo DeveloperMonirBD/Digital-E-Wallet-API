@@ -52,7 +52,7 @@ npm run dev
 ```
 
 ## Folder Structure
-src/
+```src/
 ├── modules/
 │   ├── auth/           # Login, Registration
 │   ├── user/           # User & Agent logic
@@ -62,7 +62,7 @@ src/
 ├── config/             # DB & environment config
 ├── utils/              # Helpers & constants
 ├── app.ts              # Express app setup
-
+```
 
 ## 🧪 API Endpoints Summary
 
