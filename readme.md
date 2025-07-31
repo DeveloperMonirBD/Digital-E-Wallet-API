@@ -52,7 +52,9 @@ npm run dev
 ```
 
 ## Folder Structure
-```src/
+
+```Bash
+src/
 ├── modules/
 │   ├── auth/           # Login, Registration
 │   ├── user/           # User & Agent logic
