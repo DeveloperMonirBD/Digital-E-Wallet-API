@@ -1,13 +1,26 @@
+import { envVars } from './app/config/env';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, { Request, Response } from 'express';
+import expressSession from 'express-session';
+import passport from 'passport';
+import './app/config/passport';
 import { globalErrorHandler } from './app/middlewares/globalErrorHandler';
-import { router } from './app/routes';
 import { notFound } from './app/middlewares/notFound';
-import cookieParser from 'cookie-parser';
+import { router } from './app/routes';
 
 const app = express();
 
-app.use(cookieParser())
+app.use(
+    expressSession({
+        secret: 'envVars.EXPRESS_SESSION_SECRET',
+        resave: false,
+        saveUninitialized: false
+    })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(cookieParser());
 app.use(express.json());
 app.use(cors());
 
